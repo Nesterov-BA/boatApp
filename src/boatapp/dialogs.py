@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import date
 
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtGui import QColor
 from PySide6.QtWidgets import (
     QAbstractItemView,
     QCheckBox,
@@ -29,7 +30,7 @@ from PySide6.QtWidgets import (
 from . import logic
 from .db import SessionLocal
 from .models import EquipmentItem, Ship
-from .ui_common import py_to_qdate, qdate_to_py
+from .ui_common import default_cell_colors, py_to_qdate, qdate_to_py
 
 _DATE_FORMAT = "dd.MM.yyyy"
 
@@ -175,6 +176,7 @@ class ShipManagerDialog(QDialog):
 
     def _reload(self) -> None:
         self.table.setRowCount(0)
+        _, ink = default_cell_colors()
         session = SessionLocal()
         try:
             ships = session.query(Ship).order_by(Ship.name).all()
@@ -193,6 +195,7 @@ class ShipManagerDialog(QDialog):
                     cell = QTableWidgetItem(text)
                     if col == 0:
                         cell.setData(Qt.ItemDataRole.UserRole, ship.id)
+                    cell.setForeground(QColor(ink))
                     self.table.setItem(row, col, cell)
         finally:
             session.close()

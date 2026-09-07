@@ -238,6 +238,46 @@ check(
 dlg_prev.deleteLater()
 
 # ---------------------------------------------------------------------------
+# 5b. Регрессия: тёмная тема и PDF с родительским окном
+# ---------------------------------------------------------------------------
+from PySide6.QtGui import QColor, QPalette  # noqa: E402
+
+# «включаем» тёмную тему через палитру Fusion
+QApplication.setStyle("Fusion")
+dark_palette = QPalette()
+dark_palette.setColor(QPalette.ColorRole.Window, QColor(35, 36, 40))
+dark_palette.setColor(QPalette.ColorRole.Base, QColor(28, 29, 33))
+dark_palette.setColor(QPalette.ColorRole.AlternateBase, QColor(35, 36, 40))
+dark_palette.setColor(QPalette.ColorRole.Text, QColor(235, 235, 235))
+dark_palette.setColor(QPalette.ColorRole.WindowText, QColor(235, 235, 235))
+dark_palette.setColor(QPalette.ColorRole.Button, QColor(45, 46, 50))
+dark_palette.setColor(QPalette.ColorRole.ButtonText, QColor(235, 235, 235))
+dark_palette.setColor(QPalette.ColorRole.Highlight, QColor(60, 100, 180))
+dark_palette.setColor(QPalette.ColorRole.HighlightedText, QColor(255, 255, 255))
+QApplication.instance().setPalette(dark_palette)
+
+win._refresh_current_ship()
+sample_ink = win.table.item(0, 2).foreground().color().lightness()
+check(sample_ink > 128, f"текст ячеек светлый в тёмной теме (яркость {sample_ink})")
+sample_status = win.table.item(0, 1).background().color()
+check(
+    sample_status.lightness() > 128,
+    "фон колонки «Статус» остаётся светлым (читаем) в тёмной теме",
+)
+
+# сохранение PDF с окном-родителем — как в интерфейсе (регрессия setParent)
+pdf_parent_path = RUN / "act_parent.pdf"
+ok_parent = reports.save_act_pdf(html, pdf_parent_path, parent=win)
+check(
+    ok_parent and pdf_parent_path.stat().st_size > 0,
+    "PDF сохранён с окном-родителем (нет ошибки setParent)",
+)
+
+# возвращаем светлую тему
+QApplication.instance().setPalette(QApplication.style().standardPalette())
+QApplication.setStyle("")
+
+# ---------------------------------------------------------------------------
 # 6. Удаление судна каскадом
 # ---------------------------------------------------------------------------
 session.delete(session.get(Ship, ship_id))

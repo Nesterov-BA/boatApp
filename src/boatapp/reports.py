@@ -155,7 +155,7 @@ def load_inspection(session, inspection_id: int) -> Inspection | None:
 # --------------------------------------------------------------------------
 
 
-def _make_printer(parent=None):
+def _make_printer():
     from PySide6.QtCore import QMarginsF
     from PySide6.QtGui import QPageLayout, QPageSize
     from PySide6.QtPrintSupport import QPrinter
@@ -165,8 +165,6 @@ def _make_printer(parent=None):
     printer.setPageMargins(
         QMarginsF(15, 12, 15, 12), QPageLayout.Unit.Millimeter
     )
-    if parent is not None:
-        printer.setParent(parent)  # type: ignore[attr-defined]
     return printer
 
 
@@ -183,7 +181,7 @@ def print_act_html(html: str, parent=None) -> bool:
     """Диалог печати. Возвращает True, если пользователь отправил на печать."""
     from PySide6.QtWidgets import QPrintDialog
 
-    printer = _make_printer(parent)
+    printer = _make_printer()
     dialog = QPrintDialog(printer, parent)
     if dialog.exec() != QPrintDialog.DialogCode.Accepted:
         return False
@@ -195,7 +193,7 @@ def save_act_pdf(html: str, filename: str | Path, parent=None) -> bool:
     """Сохраняет акт в PDF-файл. Возвращает True при успехе."""
     from PySide6.QtPrintSupport import QPrinter
 
-    printer = _make_printer(parent)
+    printer = _make_printer()
     printer.setOutputFormat(QPrinter.OutputFormat.PdfFormat)
     printer.setOutputFileName(str(filename))
     _render_html(html, printer)

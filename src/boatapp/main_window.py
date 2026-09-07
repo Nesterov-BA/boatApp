@@ -27,7 +27,14 @@ from .db import SessionLocal
 from .dialogs import ItemDialog, ShipDialog, ShipManagerDialog
 from .inspection_ui import ActPreviewDialog, InspectionDialog, InspectionPickerDialog
 from .models import EquipmentItem, Ship
-from .ui_common import fmt_date, status_colors, status_hint
+from .ui_common import (
+    default_cell_colors,
+    fmt_date,
+    is_dark_theme,
+    panel_style,
+    status_colors,
+    status_hint,
+)
 
 # Колонки таблицы имущества (без учёта скрытого id)
 _COLUMNS = [
@@ -150,7 +157,10 @@ class MainWindow(QMainWindow):
             "Для начала добавьте судно или загрузите демонстрационные данные."
         )
         sub.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        sub.setStyleSheet("color: #555;")
+        if is_dark_theme():
+            sub.setStyleSheet("color: #aab2bc;")
+        else:
+            sub.setStyleSheet("color: #555;")
         btn_create = QPushButton("Создать судно…")
         btn_create.setMinimumWidth(260)
         btn_create.clicked.connect(self._add_ship)
@@ -198,12 +208,11 @@ class MainWindow(QMainWindow):
             "Нажмите «+ Позиция» или «Типовой перечень АСИ»."
         )
         self.lbl_empty_items.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.lbl_empty_items.setStyleSheet("color: #888; padding: 24px;")
+        ink = "#f2f4f7" if is_dark_theme() else "#666"
+        self.lbl_empty_items.setStyleSheet(f"color: {ink}; padding: 24px;")
 
         self.lbl_summary = QLabel("")
-        self.lbl_summary.setStyleSheet(
-            "background: #f2f2f2; padding: 4px 8px; border-radius: 4px;"
-        )
+        self.lbl_summary.setStyleSheet(panel_style())
 
         lay_table.addWidget(self.lbl_empty_items)
         lay_table.addWidget(self.table)
@@ -344,6 +353,8 @@ class MainWindow(QMainWindow):
         self.table.setRowCount(0)
         self.table.setRowCount(len(self._rows))
         today = date.today()
+        # читаемый цвет текста обычных ячеек — по текущей теме (тёмная/светлая)
+        _, cell_ink = default_cell_colors()
 
         for row, item in enumerate(self._rows):
             code = logic.compute_status(item, today)
@@ -368,10 +379,13 @@ class MainWindow(QMainWindow):
             for col, text in enumerate(texts, start=1):
                 cell = QTableWidgetItem(text)
                 cell.setData(_ROLE_ID, item.id)
-                if col == 1:  # колонка «Статус»
+                if col == 1:  # колонка «Статус» — пастельная плашка
                     cell.setBackground(QColor(bg))
                     cell.setForeground(QColor(fg))
                     cell.setToolTip(status_hint(item))
+                else:
+                    # явный читаемый цвет текста под текущую тему (фон — свой)
+                    cell.setForeground(QColor(cell_ink))
                 self.table.setItem(row, col, cell)
 
         self._resize_columns()
