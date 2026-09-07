@@ -273,6 +273,25 @@ check(
     "PDF сохранён с окном-родителем (нет ошибки setParent)",
 )
 
+# предпросмотр акта остаётся белым даже в тёмной теме
+dark_prev = ActPreviewDialog(insp2.id)
+dark_prev.resize(900, 700)
+dark_prev.show()
+app.processEvents()
+img = dark_prev.browser.grab().toImage()
+points = 200
+total_lightness = 0
+for i in range(points):
+    x = img.width() * (i % 20) // 19
+    y = img.height() * (i // 20) // 9
+    total_lightness += img.pixelColor(x, y).lightness()
+avg_lightness = total_lightness / points
+dark_prev.close()
+check(
+    avg_lightness > 200,
+    f"фон предпросмотра акта светлый в тёмной теме (средн. яркость {avg_lightness:.0f})",
+)
+
 # возвращаем светлую тему
 QApplication.instance().setPalette(QApplication.style().standardPalette())
 QApplication.setStyle("")

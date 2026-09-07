@@ -289,6 +289,10 @@ class ActPreviewDialog(QDialog):
 
         self.browser = QTextBrowser()
         self.browser.setOpenExternalLinks(False)
+        # акт всегда «бумажный»: белый фон с чёрным текстом, независимо от темы
+        self.browser.setStyleSheet(
+            "QTextBrowser { background-color: #ffffff; color: #000000; }"
+        )
 
         btn_pdf = QPushButton("Сохранить PDF…")
         btn_print = QPushButton("Печать…")

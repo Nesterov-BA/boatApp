@@ -24,7 +24,7 @@ _HTML_TEMPLATE = """<!DOCTYPE html>
 <meta charset="utf-8">
 <style>
   body {{ font-family: "DejaVu Sans", "Liberation Sans", Arial, sans-serif;
-         font-size: 11pt; color: #000; }}
+         font-size: 11pt; color: #000; background: #ffffff; }}
   h1 {{ font-size: 16pt; text-align: center; margin: 0 0 4px 0; }}
   h2 {{ font-size: 13pt; text-align: center; margin: 0 0 18px 0;
         font-weight: normal; }}
