@@ -54,3 +54,23 @@ compile_commands.json
 *creator.user*
 
 *_qmlcache.qrc
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+dist/
+
+# SQLite
+*.db
+*.db-journal
+*.sqlite3
+
+# Qt/PySide6 artifacts
+*.log
+
+# Локальные инструменты/артефакты разработки
+.qtlibs/
+.uv-cache/
+tests/_run/

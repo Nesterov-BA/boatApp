@@ -1,19 +1,21 @@
+"""Точка входа программы «АСИ — учёт и проверка имущества на судах».
+
+Запуск из каталога проекта:
+
+    uv run python main.py
+
+или после установки пакета — командой ``boatapp``.
+"""
+
+from __future__ import annotations
+
 import sys
+from pathlib import Path
 
-from PySide6.QtWidgets import QApplication, QWidget  # Add QWidget
+# Пакет лежит в src/, а точка входа — в корне проекта:
+sys.path.insert(0, str(Path(__file__).resolve().parent / "src"))
 
-from src.database import Base, engine
-from src.model import Item
-from src.mywidget import BoatListWidget
+from boatapp import main  # noqa: E402
 
 if __name__ == "__main__":
-    Base.metadata.create_all(engine, checkfirst=True)
-    app = QApplication(sys.argv)
-
-    # Create and show a window
-    window = BoatListWidget()
-    window.setWindowTitle("My App")
-    window.resize(400, 300)
-    window.show()  # <-- This is what makes it visible!
-
-    sys.exit(app.exec())
+    raise SystemExit(main())

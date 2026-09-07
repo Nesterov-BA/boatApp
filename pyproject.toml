@@ -1,7 +1,7 @@
 [project]
 name = "boatapp"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.2.0"
+description = "АСИ: учёт и проверка аварийно-спасательного имущества на судах"
 readme = "README.md"
 authors = [
     { name = "Nesterov-BA", email = "nesterov.boris123@gmail.com" }
