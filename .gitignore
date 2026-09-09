@@ -67,6 +67,9 @@ dist/
 *.db-journal
 *.sqlite3
 
+# Файл окружения с настройками подключения (может содержать пароль)
+boatapp.env
+
 # Qt/PySide6 artifacts
 *.log
 

@@ -12,6 +12,14 @@ dependencies = [
     "sqlalchemy>=2.0.52",
 ]
 
+[project.optional-dependencies]
+postgres = [
+    "psycopg[binary]>=3.2",
+]
+mysql = [
+    "pymysql>=1.1",
+]
+
 [project.scripts]
 boatapp = "boatapp:main"
 

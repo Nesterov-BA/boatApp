@@ -230,6 +230,14 @@ class MainWindow(QMainWindow):
         # Статус-бар
         self.statusBar().showMessage("Готово.")
 
+        # Меню настройки базы данных (без консоли)
+        settings_menu = self.menuBar().addMenu("Настройки")
+        act_db = settings_menu.addAction("База данных…")
+        act_db.setToolTip(
+            "Сменить хранилище данных: локальный SQLite или серверная СУБД"
+        )
+        act_db.triggered.connect(self._change_database)
+
     # ------------------------------------------------------------------
     # Данные: суда
     # ------------------------------------------------------------------
@@ -499,6 +507,23 @@ class MainWindow(QMainWindow):
         finally:
             session.close()
         self._reload_ships(current if exists else None)
+
+    def _change_database(self) -> None:
+        """Смена хранилища через диалог «База данных…» (без консоли)."""
+        from . import db
+        from .db_setup import run_db_setup_dialog
+
+        if not run_db_setup_dialog(self, first_run=False):
+            return
+        QMessageBox.information(
+            self,
+            "База данных",
+            "Подключение к базе данных переключено.\n\n"
+            f"Текущее подключение: {db.describe_backend()}",
+        )
+        # перезагружаем интерфейс из новой базы
+        self.current_ship_id = None
+        self._reload_ships()
 
     def _load_demo(self) -> None:
         ret = QMessageBox.question(

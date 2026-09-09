@@ -1,2 +1,6 @@
 PySide6>=6.11
 SQLAlchemy>=2.0
+
+# Драйверы для базы данных на сервере (устанавливаются по необходимости):
+# PostgreSQL: psycopg[binary]
+# MySQL / MariaDB: pymysql
